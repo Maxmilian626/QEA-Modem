@@ -13,6 +13,7 @@ import wave
 import evdev
 import struct
 import itertools
+import scipy.fftpack
 
 mrs2str = {'113': 'u', '111': 's', '13': 'a', '131': 'r', '11': 'i', '133': 'w', '31': 'n', 
 '33': 'm', '1111': 'h', '1113': 'v', '1': 'e', '1311': 'l', '3': 't', '1131': 'f',
@@ -106,9 +107,9 @@ if __name__ == '__main__':
 	audio = struct.unpack_from ("%dh" % nframes * nchannels, frames)
 
 	lowpassed = lowPass(10, audio)
+
 	smooth_magnitude = movingAverage(abs(lowpassed), 5) #takes the absolute value, then a moving average of that
 
-	#print isplit([1, 4, None, 6, 9, None, 3, 9, 4 ], (None,))
 	bits = bits(smooth_magnitude)
 
 	word = ""
@@ -116,3 +117,15 @@ if __name__ == '__main__':
 		word += mrs2str[bit]
 
 	print word
+
+	Aud = np.array(scipy.fftpack.fft(audio))
+	Low = np.array(scipy.fftpack.fft(lowpassed))
+
+	T = 1.0/44100
+	N = len(Aud)
+	xf = np.linspace(0.0, 1.0/(2.0*T), N/2)
+
+	fig, ax = plt.subplots()
+	ax.plot(xf, 2.0/N * np.abs(Aud[0:N/2]))
+	ax.plot(xf, 2.0/N * np.abs(Low[0:N/2]))
+	plt.show()
