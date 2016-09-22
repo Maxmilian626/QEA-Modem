@@ -8,7 +8,7 @@ import pyaudio
 
 #Sound generation parameters
 signal_length = 30000. #ms
-Fs = 1/signal_length # Sampling Rate, in hertz -> samples/second, 44100 is standard
+Fs = 1.0/signal_length # Sampling Rate, in hertz -> samples/second, 44100 is standard
 Ts = 1.0/Fs # sampling interval
 Carrier_Frequency = 700. #This is hertz, A note.  The carrier frequency, I guess
 Fc = 1.0/Carrier_Frequency
@@ -34,10 +34,9 @@ for char in bits:
 	else:
 		test_data = np.append(neg_ones, test_data)
 
-
-#At the end it will append this array to an array of "000000000001" or so, the wakeup signal.
-
-#This part will have a text input and use the binascii library in order to convert a string to a binary array.
+#Insert the wakeup signal, array of "01"
+wakeupSignal = np.append(neg_ones, ones)
+test_data = np.append(wakeupSignal, test_data)
 
 #matplotlib.pyplot.plot(np.arange(len(test_signal)), np.absolute(test_fft))
 #matplotlib.pyplot.plot(np.arange(len(test_data)), test_data)
