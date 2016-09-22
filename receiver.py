@@ -28,32 +28,42 @@ def downconversion(signal):
 	Ts = 1.0/Fs # sampling interval
 	Carrier_Frequency = 450. #This is hertz, A note.  The carrier frequency, I guess
 	Fc = 1.0/Carrier_Frequency
+	A = #?????
 
 	domain = np.arange(len(signal))
 	time = Ts*np.array(domain) #time array
 
-	sig = (5.0)*np.cos(2.0*math.pi*Fc*time) # 5 is placeholder for amplitude...
+	sig = A*np.cos(2.0*math.pi*Fc*time) # 5 is placeholder for amplitude...
 
 	return np.multiply(sig, signal)
 
-
-
 #translater functions one you have a clean wave
 
+def _itersplit(l, splitters):
+    current = []
+    for item in l:
+        if item in splitters:
+            yield current
+            current = []
+        else:
+            current.append(item)
+    yield current
+
+def magicsplit(l, *splitters):
+    return [subl for subl in _itersplit(l, splitters) if subl]
+
 def bits(wave):
-	amp_threshold = 0.5 #this is a placeholder. it's totally too high.
+	amp_threshold = 5000 #this is a placeholder.
+	print max(wave)
+	print min(wave)
 	chunks = isplit(wave, (amp_threshold,))
 	letterlist = []
 	for chunk in chunks:
-		if chunk[0] > amp_threshold: #1
+		if chunk > amp_threshold: #1
 			letterlist.append("1")
 		else: #0
 			letterlist.append("0")
 	return letterlist
-
-def isplit(iterable, splitters):
-	#a very nice split function, splits the iterable(list) on the splitter value
-	return [list(g) for k,g in itertools.groupby(iterable,lambda x:x in splitters) if not k]
 
 def text_from_bits(bits, encoding='utf-8', errors='surrogatepass'):
     n = int(bits, 2)
@@ -124,7 +134,8 @@ if __name__ == '__main__':
 	ay.plot(np.array(aud), 'm')
 	plt.show()
 
-	# bits = bits(smooth_magnitude)
+	bits = bits(back)
+	print bits
 
 	# word = ""
 	# for bit in bits:
