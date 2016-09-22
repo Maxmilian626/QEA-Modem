@@ -51,7 +51,8 @@ domain = np.arange(len(test_data))
 time = np.array(domain)/(Fs)#time array, in seconds
 
 amplitude = math.sqrt(2.0/(bit_length/1000.))
-omegaX = amplitude*np.cos(2.0*math.pi*Fc*time) #cos(2pi*Fc*n), 
+#omegaX = amplitude*np.cos(2.0*math.pi*Fc*time) #cos(2pi*Fc*n), 
+omegaX = amplitude*(np.cos(2*np.pi*(domain)*(Fc/Fs))).astype(np.float32)
 test_signal = np.multiply(omegaX, test_data) #multiplies by 1 or -1
 
 test_signal_fft = scipy.fftpack.fft(test_signal)
@@ -61,15 +62,14 @@ matplotlib.pyplot.show()
 def return_test_signal():
 	return test_signal
 
-# PyAudio = pyaudio.PyAudio
-# p = PyAudio()
-# stream = p.open(format = p.get_format_from_width(1), 
-#                 channels = 1, 
-#                 rate = 44100, 
-#                 output = True)
-# stream.write(test_signal)
-# stream.stop_stream()
-# stream.close()
-# p.terminate()
+p = pyaudio.PyAudio() # ; p.get_format_from_width(1) -> try out different formats.  Sounds better.  
+stream = p.open(format = pyaudio.paInt32, 
+                channels = 1, 
+                rate = int(Fs), 
+                output = True)
+stream.write(test_signal)
+stream.stop_stream()
+stream.close()
+p.terminate()
 
 #scipy.io.wavfile.write('test.wav', Fs, test_signal)
