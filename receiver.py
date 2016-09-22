@@ -57,7 +57,10 @@ def downconversion(signal):
 	domain = np.arange(len(signal))
 	time = Ts*np.array(domain) #time array
 
-	return (5.0)*np.cos(2.0*math.pi*Fc*time) # 5 is placeholder for amplitude...
+	sig = (5.0)*np.cos(2.0*math.pi*Fc*time) # 5 is placeholder for amplitude...
+
+	return sig*signal
+
 
 
 def record():
@@ -109,6 +112,10 @@ if __name__ == '__main__':
 	lowpassed = lowPass(10, audio)
 
 	back = downconversion(lowpassed)
+
+	fig, ay = plt.subplots()
+	ay.plot(np.array(back))
+	plt.show()
 
 	# smooth_magnitude = movingAverage(abs(lowpassed), 5) #takes the absolute value, then a moving average of that
 
