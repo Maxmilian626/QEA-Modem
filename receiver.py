@@ -41,7 +41,7 @@ def downconversion(signal):
 #translater functions one you have a clean wave
 
 def bits(wave):
-	amp_threshold = 7 #this is a placeholder. it's totally too high.
+	amp_threshold = 0.5 #this is a placeholder. it's totally too high.
 	chunks = isplit(wave, (amp_threshold,))
 	letterlist = []
 	for chunk in chunks:
@@ -117,15 +117,12 @@ if __name__ == '__main__':
 	#lowpassed = lowPass(10, audio)
 
 	back = downconversion(aud)
+	back = movingAverage(abs(back), 1000)
 
 	fig, ay = plt.subplots()
 	ay.plot(np.array(back), 'b')
 	ay.plot(np.array(aud), 'm')
 	plt.show()
-
-	print(text_from_bits('0110100001100101011011000110110001101111'))
-
-	# smooth_magnitude = movingAverage(abs(lowpassed), 5) #takes the absolute value, then a moving average of that
 
 	# bits = bits(smooth_magnitude)
 
