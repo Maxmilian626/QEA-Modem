@@ -7,16 +7,16 @@ import binascii
 import pyaudio
 
 #Sound generation parameters
-signal_length = 30000. #ms
-Fs = 1.0/signal_length # Sampling Rate, in hertz -> samples/second, 44100 is standard
+bit_time = 500. #each bit should play for this many ms
+Fs = 44100. # Sampling Rate, in hertz -> samples/second, 44100 is standard
+bit_length = int(Fs*(bit_time/1000.)) #Samples required for each bit length
 Ts = 1.0/Fs # sampling interval
-Carrier_Frequency = 450. #This is hertz, A note.  The carrier frequency, I guess
-Fc = 1.0/Carrier_Frequency
-#ps = (2*math.pi)/Fs #rads/sample
+Fc = 225. #This is hertz, A note.  The carrier frequency, I guess
+rps = Fs*((2*math.pi)/Fc) #rads/sample
 
 #Square Wave Generation
-ones = np.ones(signal_length)
-neg_ones = -1.0*np.ones(signal_length)
+ones = np.ones(bit_length)
+neg_ones = -1.0*np.ones(bit_length)
 
 def text_to_bits(text, encoding='utf-8', errors='surrogatepass'):
 	#http://stackoverflow.com/questions/7396849/convert-binary-to-ascii-and-vice-versa
@@ -28,7 +28,7 @@ bits = text_to_bits(word)
 
 test_data = np.array([])
 
-for char in bits:
+for char in bits:					#Assuming each entry plays at one entry/ms
 	if char == "1":
 		test_data = np.append(ones, test_data)
 	else:
@@ -48,15 +48,13 @@ test_data = np.append(wakeupSignal, test_data)
 
 #Convert to Sound signal
 domain = np.arange(len(test_data))
-time = Ts*np.array(domain) #time array
+time = np.array(domain)/(Fs)#time array, in milliseconds
 
-amplitude = math.sqrt(2/Fs)
-omegaX = np.cos(2.0*math.pi*Fc*time) #cos(2pi*Fs*n), 5 is a placeholder
-#print omegaX
-omegaX = (5.0)*np.cos(2.0*math.pi*Fc*time) #cos(2pi*Fs*n), 5 is a placeholder for amplitude
+amplitude = math.sqrt(2.0/(bit_length/1000.))
+omegaX = amplitude*np.cos(2.0*math.pi*Fc*time) #cos(2pi*Fc*n), 
 test_signal = np.multiply(omegaX, test_data) #multiplies by 1 or -1
 
-test_signal_fft = scipy.fftpack.fft(test_signal)
+#test_signal_fft = scipy.fftpack.fft(test_signal)
 matplotlib.pyplot.plot(time, test_signal)
 matplotlib.pyplot.show()
 
