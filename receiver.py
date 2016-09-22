@@ -115,6 +115,7 @@ if __name__ == '__main__':
 
 	fig, ay = plt.subplots()
 	ay.plot(np.array(back))
+	ay.plot(np.array(audio))
 	plt.show()
 
 	# smooth_magnitude = movingAverage(abs(lowpassed), 5) #takes the absolute value, then a moving average of that

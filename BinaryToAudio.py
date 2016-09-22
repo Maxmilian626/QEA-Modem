@@ -4,17 +4,15 @@ import scipy.fftpack
 import matplotlib.pyplot
 import math
 import binascii
-
+import pyaudio
 
 #Sound generation parameters
-signal_length = 30. #ms
+signal_length = 3000. #ms
 Fs = 1/signal_length # Sampling Rate, in hertz -> samples/second, 44100 is standard
 Ts = 1.0/Fs # sampling interval
-Carrier_Frequency = 16. #This is hertz, A note.  The carrier frequency, I guess
+Carrier_Frequency = 400. #This is hertz, A note.  The carrier frequency, I guess
 Fc = 1.0/Carrier_Frequency
 #ps = (2*math.pi)/Fs #rads/sample
-
-
 
 #Square Wave Generation
 ones = np.ones(signal_length)
@@ -42,5 +40,16 @@ test_signal = np.multiply(omegaX, test_data) #multiplies by 1 or -1
 test_signal_fft = scipy.fftpack.fft(test_signal)
 matplotlib.pyplot.plot(time, test_signal)
 matplotlib.pyplot.show()
+
+PyAudio = pyaudio.PyAudio
+p = PyAudio()
+stream = p.open(format = p.get_format_from_width(1), 
+                channels = 1, 
+                rate = 44100, 
+                output = True)
+stream.write(test_signal)
+stream.stop_stream()
+stream.close()
+p.terminate()
 
 #scipy.io.wavfile.write('test.wav', Fs, test_signal)
