@@ -35,7 +35,7 @@ domain = np.arange(len(test_data))
 time = Ts*np.array(domain) #time array
 
 amplitude = math.sqrt(2/Fs)
-omegaX = (5.0)*np.cos(2.0*math.pi*Fc*time) #cos(2pi*Fs*n)
+omegaX = (5.0)*np.cos(2.0*math.pi*Fc*time) #cos(2pi*Fs*n), 5 is a placeholder
 print omegaX
 test_signal = np.multiply(omegaX, test_data) #multiplies by 1 or -1
 
