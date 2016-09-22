@@ -7,16 +7,13 @@ import wave
 import struct
 import itertools
 import scipy.fftpack
+import binascii
 
-mrs2str = {'113': 'u', '111': 's', '13': 'a', '131': 'r', '11': 'i', '133': 'w', '31': 'n', 
-'33': 'm', '1111': 'h', '1113': 'v', '1': 'e', '1311': 'l', '3': 't', '1131': 'f',
- '1331': 'p', '1333': 'j', '3131': 'c', '3133': 'y', '3311': 'z', '3313': 'q', '3113': 'x', '3111': 'b', 
- '333': 'o', '331': 'g', '311': 'd', '313': 'k'}
+
+#getting a clean wave
 
 def lowPass(filterorder, sig):
-
 	#function takes in an array that represents a signal and returns a version that has been through a low pass filter
-
 	b, a = signal.butter(filterorder, .05) #create butterworth filter which exports parameters for filtfilt, given order and cutoff
 	v = signal.filtfilt(b, a, sig)
 	return v
@@ -26,32 +23,10 @@ def movingAverage (values, window):
 	sma = np.convolve(values, weights, 'valid')
 	return sma
 
-# def bits(wave):
-# 	amp_threshold = 7 #this is a placeholder. it's totally too high.
-# 	dash_threshold = 1000 #distinction between dot and dash
-# 	new_threshold = 3000 #threshold to be a new letter
-# 	chunks = isplit(wave, (amp_threshold,))
-# 	letterlist = []
-# 	for chunk in chunks:
-# 		if chunk[0] > amp_threshold: #dot or dash
-# 			if len(chunk) > dash_threshold:
-# 				letterlist.append("3")
-# 			else:
-# 				letterlist.append("1")
-# 		else: #long pause or short pause
-# 			if len(chunk) > new_threshold:
-# 				letterlist.append("0")
-# 			#else do nothing
-# 	return ("".join(letterlist).split("0"))
-
-def isplit(iterable, splitters):
-	#a very nice split function, splits the iterable(list) on the splitter value
-	return [list(g) for k,g in itertools.groupby(iterable,lambda x:x in splitters) if not k]
-
 def downconversion(signal):
 	Fs = 44100 # Sampling Rate, in hertz -> samples/second, 44100 is standard
 	Ts = 1.0/Fs # sampling interval
-	Carrier_Frequency = 16. #This is hertz, A note.  The carrier frequency, I guess
+	Carrier_Frequency = 450. #This is hertz, A note.  The carrier frequency, I guess
 	Fc = 1.0/Carrier_Frequency
 
 	domain = np.arange(len(signal))
@@ -62,6 +37,36 @@ def downconversion(signal):
 	return np.multiply(sig, signal)
 
 
+
+#translater functions one you have a clean wave
+
+def bits(wave):
+	amp_threshold = 7 #this is a placeholder. it's totally too high.
+	chunks = isplit(wave, (amp_threshold,))
+	letterlist = []
+	for chunk in chunks:
+		if chunk[0] > amp_threshold: #1
+			letterlist.append("1")
+		else: #0
+			letterlist.append("0")
+	return letterlist
+
+def isplit(iterable, splitters):
+	#a very nice split function, splits the iterable(list) on the splitter value
+	return [list(g) for k,g in itertools.groupby(iterable,lambda x:x in splitters) if not k]
+
+def text_from_bits(bits, encoding='utf-8', errors='surrogatepass'):
+    n = int(bits, 2)
+    return int2bytes(n).decode(encoding, errors)
+
+def int2bytes(i):
+    hex_string = '%x' % i
+    n = len(hex_string)
+    return binascii.unhexlify(hex_string.zfill(n + (n & 1)))
+
+
+
+#recording the signal
 
 def record():
 	""" Records audio while the space bar is pressed and saves the audio to
@@ -117,6 +122,8 @@ if __name__ == '__main__':
 	ay.plot(np.array(back), 'b')
 	ay.plot(np.array(aud), 'm')
 	plt.show()
+
+	print(text_from_bits('0110100001100101011011000110110001101111'))
 
 	# smooth_magnitude = movingAverage(abs(lowpassed), 5) #takes the absolute value, then a moving average of that
 
