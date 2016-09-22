@@ -53,15 +53,18 @@ def downconversion(signal):
 
 def _itersplit(l, splitters):
 	current = []
-	above = False
+	if l[0] > splitters:
+		above = True
+	else:
+		above = False
 
 	for item in l:
-		if item > splitters and above == False:
-			above == True
+		if item < splitters and above == True:
+			above = False
 			yield current
 			current = []
-		elif item < splitters and above == True:
-			above == False
+		elif item > splitters and above == False:
+			above = True
 			yield current
 			current = []
 		else:
@@ -72,13 +75,13 @@ def magicsplit(l, *splitters):
 	return [subl for subl in _itersplit(l, splitters) if subl]
 
 def bits(wave):
-	amp_threshold = 5000 #this is a placeholder.
+	amp_threshold = 0 #this is a placeholder.
 	print max(wave)
 	print min(wave)
-	chunks = magicsplit(wave, (amp_threshold,))
+	chunks = magicsplit(wave, amp_threshold)
 	letterlist = []
 	for chunk in chunks:
-		if chunk[-1] > amp_threshold: #1
+		if chunk[0] > amp_threshold: #1
 			letterlist.append("1")
 		else: #0
 			letterlist.append("0")
