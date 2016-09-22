@@ -59,7 +59,7 @@ def downconversion(signal):
 
 	sig = (5.0)*np.cos(2.0*math.pi*Fc*time) # 5 is placeholder for amplitude...
 
-	return sig*signal
+	return np.multiply(sig, signal)
 
 
 
@@ -107,15 +107,15 @@ if __name__ == '__main__':
 	w = wave.open("file.wav", "r")
 	(nchannels, sampwidth, framerate, nframes, comptype, compname) = w.getparams ()
 	frames = w.readframes(nframes*nchannels)
-	audio = struct.unpack_from ("%dh" % nframes * nchannels, frames)
+	aud = struct.unpack_from ("%dh" % nframes * nchannels, frames)
 
 	#lowpassed = lowPass(10, audio)
 
-	back = downconversion(audio)
+	back = downconversion(aud)
 
 	fig, ay = plt.subplots()
 	ay.plot(np.array(back), 'b')
-	ay.plot(np.array(audio), 'm')
+	ay.plot(np.array(aud), 'm')
 	plt.show()
 
 	# smooth_magnitude = movingAverage(abs(lowpassed), 5) #takes the absolute value, then a moving average of that
@@ -128,14 +128,14 @@ if __name__ == '__main__':
 
 	# print word
 
-	Aud = np.array(scipy.fftpack.fft(audio))
+	Aud = np.array(scipy.fftpack.fft(aud))
 	Low = np.array(scipy.fftpack.fft(back))
 
 	T = 1.0/44100
 	N = len(Aud)
 	xf = np.linspace(0.0, 1.0/(2.0*T), N/2)
 
-	# fig, ax = plt.subplots()
-	# ax.plot(xf, 2.0/N * np.abs(Aud[0:N/2]), 'b-')
-	# ax.plot(xf, 2.0/N * np.abs(Low[0:N/2]), 'm-')
-	# plt.show()
+	fig, ax = plt.subplots()
+	ax.plot(xf, 2.0/N * np.abs(Aud[0:N/2]), 'b-')
+	ax.plot(xf, 2.0/N * np.abs(Low[0:N/2]), 'm-')
+	plt.show()

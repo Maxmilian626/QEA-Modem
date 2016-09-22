@@ -10,7 +10,7 @@ import pyaudio
 signal_length = 30000. #ms
 Fs = 1.0/signal_length # Sampling Rate, in hertz -> samples/second, 44100 is standard
 Ts = 1.0/Fs # sampling interval
-Carrier_Frequency = 700. #This is hertz, A note.  The carrier frequency, I guess
+Carrier_Frequency = 450. #This is hertz, A note.  The carrier frequency, I guess
 Fc = 1.0/Carrier_Frequency
 #ps = (2*math.pi)/Fs #rads/sample
 
@@ -23,7 +23,7 @@ def text_to_bits(text, encoding='utf-8', errors='surrogatepass'):
     bits = bin(int(binascii.hexlify(text.encode(encoding, errors)), 16))[2:]
     return bits.zfill(8 * ((len(bits) + 7) // 8))
 
-word = "n"
+word = "z"
 bits = text_to_bits(word)
 
 test_data = np.array([])
@@ -34,6 +34,8 @@ for char in bits:
 	else:
 		test_data = np.append(neg_ones, test_data)
 
+
+#test_fft = scipy.fftpack.fft(test_signal)
 #Insert the wakeup signal, array of "01"
 wakeupSignal = np.append(neg_ones, ones)
 test_data = np.append(wakeupSignal, test_data)
@@ -49,6 +51,8 @@ domain = np.arange(len(test_data))
 time = Ts*np.array(domain) #time array
 
 amplitude = math.sqrt(2/Fs)
+omegaX = np.cos(2.0*math.pi*Fc*time) #cos(2pi*Fs*n), 5 is a placeholder
+#print omegaX
 omegaX = (5.0)*np.cos(2.0*math.pi*Fc*time) #cos(2pi*Fs*n), 5 is a placeholder for amplitude
 test_signal = np.multiply(omegaX, test_data) #multiplies by 1 or -1
 
