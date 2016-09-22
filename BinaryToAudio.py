@@ -8,7 +8,7 @@ import pyaudio
 
 #Sound generation parameters
 signal_length = 30000. #ms
-Fs = 1/signal_length # Sampling Rate, in hertz -> samples/second, 44100 is standard
+Fs = 1.0/signal_length # Sampling Rate, in hertz -> samples/second, 44100 is standard
 Ts = 1.0/Fs # sampling interval
 Carrier_Frequency = 450. #This is hertz, A note.  The carrier frequency, I guess
 Fc = 1.0/Carrier_Frequency
@@ -35,9 +35,10 @@ for char in bits:
 		test_data = np.append(neg_ones, test_data)
 
 
-
-
 #test_fft = scipy.fftpack.fft(test_signal)
+#Insert the wakeup signal, array of "01"
+wakeupSignal = np.append(neg_ones, ones)
+test_data = np.append(wakeupSignal, test_data)
 
 #matplotlib.pyplot.plot(np.arange(len(test_signal)), np.absolute(test_fft))
 #matplotlib.pyplot.plot(np.arange(len(test_data)), test_data)
@@ -52,6 +53,8 @@ time = Ts*np.array(domain) #time array
 amplitude = math.sqrt(2/Fs)
 omegaX = np.cos(2.0*math.pi*Fc*time) #cos(2pi*Fs*n), 5 is a placeholder
 #print omegaX
+omegaX = (5.0)*np.cos(2.0*math.pi*Fc*time) #cos(2pi*Fs*n), 5 is a placeholder for amplitude
+print omegaX
 test_signal = np.multiply(omegaX, test_data) #multiplies by 1 or -1
 
 test_signal_fft = scipy.fftpack.fft(test_signal)
