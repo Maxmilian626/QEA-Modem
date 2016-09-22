@@ -50,12 +50,11 @@ time = Ts*np.array(domain) #time array
 
 amplitude = math.sqrt(2/Fs)
 omegaX = (5.0)*np.cos(2.0*math.pi*Fc*time) #cos(2pi*Fs*n), 5 is a placeholder for amplitude
-print omegaX
 test_signal = np.multiply(omegaX, test_data) #multiplies by 1 or -1
 
 test_signal_fft = scipy.fftpack.fft(test_signal)
-# matplotlib.pyplot.plot(time, test_signal)
-# matplotlib.pyplot.show()
+matplotlib.pyplot.plot(time, test_signal)
+matplotlib.pyplot.show()
 
 PyAudio = pyaudio.PyAudio
 p = PyAudio()
