@@ -22,7 +22,9 @@ neg_ones = -1.0*np.ones(signal_length)
 
 test_data = np.append(ones, np.append(neg_ones, ones))
 
-#test_fft = scipy.fftpack.fft(test_signal)
+#At the end it will append this array to an array of "000000000001" or so, the wakeup signal.
+
+#This part will have a text input and use the binascii library in order to convert a string to a binary array.
 
 #matplotlib.pyplot.plot(np.arange(len(test_signal)), np.absolute(test_fft))
 #matplotlib.pyplot.plot(np.arange(len(test_data)), test_data)
@@ -35,7 +37,7 @@ domain = np.arange(len(test_data))
 time = Ts*np.array(domain) #time array
 
 amplitude = math.sqrt(2/Fs)
-omegaX = (5.0)*np.cos(2.0*math.pi*Fc*time) #cos(2pi*Fs*n), 5 is a placeholder
+omegaX = (5.0)*np.cos(2.0*math.pi*Fc*time) #cos(2pi*Fs*n), 5 is a placeholder for amplitude
 print omegaX
 test_signal = np.multiply(omegaX, test_data) #multiplies by 1 or -1
 
