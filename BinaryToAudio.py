@@ -48,25 +48,28 @@ test_data = np.append(wakeupSignal, test_data)
 
 #Convert to Sound signal
 domain = np.arange(len(test_data))
-time = np.array(domain)/(Fs)#time array, in milliseconds
+time = np.array(domain)/(Fs)#time array, in seconds
 
 amplitude = math.sqrt(2.0/(bit_length/1000.))
 omegaX = amplitude*np.cos(2.0*math.pi*Fc*time) #cos(2pi*Fc*n), 
 test_signal = np.multiply(omegaX, test_data) #multiplies by 1 or -1
 
-#test_signal_fft = scipy.fftpack.fft(test_signal)
+test_signal_fft = scipy.fftpack.fft(test_signal)
 matplotlib.pyplot.plot(time, test_signal)
 matplotlib.pyplot.show()
 
-PyAudio = pyaudio.PyAudio
-p = PyAudio()
-stream = p.open(format = p.get_format_from_width(1), 
-                channels = 1, 
-                rate = 44100, 
-                output = True)
-stream.write(test_signal)
-stream.stop_stream()
-stream.close()
-p.terminate()
+def return_test_signal():
+	return test_signal
+
+# PyAudio = pyaudio.PyAudio
+# p = PyAudio()
+# stream = p.open(format = p.get_format_from_width(1), 
+#                 channels = 1, 
+#                 rate = 44100, 
+#                 output = True)
+# stream.write(test_signal)
+# stream.stop_stream()
+# stream.close()
+# p.terminate()
 
 #scipy.io.wavfile.write('test.wav', Fs, test_signal)
